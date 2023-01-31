@@ -14,7 +14,7 @@ public class Box <E extends Fruit>{
     // Метод, который пересыпает фрукты из текущей коробки в другую коробку
     // Для внутреннего хранения можно использовать например List
 
-    private List<E> list;
+    private List <E>  list;
         public Box(){
             list = new ArrayList<>();
         }
@@ -34,9 +34,14 @@ public class Box <E extends Fruit>{
         return sum;
     }
 
-    public void moveTo(Box <E> anotherBox) {
+    public   void  moveTo(Box<Apple> anotherBox) {
         // TODO: 24.01.2023
         // Пересыпать фрукты из текущей коробки в anotherBox
+        for (int i = 0; i < list.size(); i++) {
+//            list.add((E) anotherBox.list.get(i));
+            anotherBox.list.add((Apple) list.get(i));
+
+        }
 
     }
 
