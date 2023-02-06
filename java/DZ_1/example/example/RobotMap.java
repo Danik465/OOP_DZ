@@ -69,13 +69,13 @@ public class RobotMap {
     public class Robot {
 
         public static final Direction DEFAULT_DIRECTION = Direction.TOP;
-
-        private final UUID id;
+    private  static  Long idSequence = 1L;
+        private final Long id;
         private MapPoint point;
         private Direction direction;
 
         public Robot(MapPoint point) {
-            this.id = UUID.randomUUID();
+            this.id = idSequence++;
             this.point = point;
             this.direction = DEFAULT_DIRECTION;
         }
@@ -126,7 +126,7 @@ public class RobotMap {
 
         @Override
         public String toString() {
-            return "Robot-" + id + point;
+            return "Robot-" + id +" "+ point;
         }
     }
 

@@ -1,130 +1,204 @@
 package DZ_1.example.example;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
-        // Р•СЃС‚СЊ РґРІСѓРјРµСЂРЅР°СЏ РєР°СЂС‚Р° СЃ СЂРѕР±РѕС‚Р°РјРё
-        // Р РѕР±РѕС‚С‹ СЌС‚Рѕ РѕР±СЉРµРєС‚С‹, РѕРЅРё РјРѕРіСѓС‚ РїРµСЂРµРјРµС‰Р°С‚СЊСЃСЏ РїРѕ РєР°СЂС‚Рµ
-        // РљР°СЂС‚Р° РёРјРµРµС‚ РєР°РєРёРµ-С‚Рѕ РіСЂР°РЅРёС†С‹
-        // 2 СЂРѕР±РѕС‚Р° РЅРµ РјРѕРіСѓС‚ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РѕРґРЅРѕР№ С‚РѕС‡РєРµ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕ
-        // Р РѕР±РѕС‚С‹ РёРјРµСЋС‚ РЅР°РїСЂР°РІР»РµРЅРёРµ (РєРѕС‚РѕСЂРѕРµ РјРѕР¶РЅРѕ РјРµРЅСЏС‚СЊ (РїРѕРІРѕСЂР°С‡РёРІР°С‚СЊ)),
-        //              СЂРѕР±РѕС‚С‹ РёРґСѓС‚ С‚РѕР»СЊРєРѕ РІРїРµСЂРµРґ (РёР»Рё СЃС‚РѕСЏС‚ РЅР° РјРµСЃС‚Рµ).
+        // Есть двумерная карта с роботами
+        // Роботы это объекты, они могут перемещаться по карте
+        // Карта имеет какие-то границы
+        // 2 робота не могут находиться в одной точке одновременно
+        // Роботы имеют направление (которое можно менять (поворачивать)),
+        //              роботы идут только вперед (или стоят на месте).
 
-//        RobotMap.Robot robot = new RobotMap.Robot();
-        //  0, 0                  0, n   -> <-
-        //  1, 0                  1, n
+        Scanner userInput = new Scanner(System.in);
 
+        System.out.println("Добро пожаловать в игру!");
+        System.out.println("...описание...");
 
-        // m, 0                    m, n
-        //
+        RobotMap map;
+        while (true) {
+            System.out.println("Для создания карты введите 2 положительных числа через пробел");
+            try {
+                int n = userInput.nextInt();
+                int m = userInput.nextInt();
+                userInput.nextLine();
 
-//        Scanner scanner = new Scanner(System.in);
-//        RobotMap map = null;
-//
-//        System.out.println("Р’РІРµРґРёС‚Рµ СЂР°Р·РјРµСЂ РїРѕР»СЏ: (2 С‡РёСЃР»Р° С‡РµСЂРµР· РїСЂРѕР±РµР»)");
-//        int n = scanner.nextInt();
-//        int m = scanner.nextInt();
-//        try {
-//            map = new RobotMap(n, m);
-//        } catch (IllegalArgumentException e) {
-//            System.err.println("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ РєР°СЂС‚Сѓ: " + e.getMessage());
-//            System.out.println("РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰Рµ СЂР°Р·");
-//        }
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Р—РґСЂР°РІСЃС‚РІСѓР№С‚Рµ, РґР»СЏ РЅР°С‡Р°Р»Р° РґР°РІР°Р№С‚Рµ СЃРѕР·РґР°РґРёРј РєР°СЂС‚Сѓ!\nР’РІРµРґРёС‚Рµ РїР°СЂР°РјРµС‚СЂС‹ РєР°СЂС‚С‹:");
-        int n = sc.nextInt();
-        int m = sc.nextInt();
+                map = new RobotMap(n, m);
+                break;
+            } catch (CreateMapValidationException | InputMismatchException e) {
+                System.err.println("Возникла ошибка при создании карты: " + e.getMessage());
+            } catch (Throwable e) {
+                System.err.println("Возникла ошибка на стороне сервера: " + e.getMessage());
+                System.exit(1);
+            }
+        }
 
+        System.out.println("Карта успешно создана!");
 
-        try{
-            RobotMap map = new RobotMap(n, m);
+        CommandManager commandManager = new CommandManager(map);
 
-            System.out.printf("РћС‚Р»РёС‡РЅРѕ! Р’С‹ СЃРѕР·РґР°Р»Рё РєР°СЂС‚Сѓ %s РЅР° %s\nР”Р°Р»СЊС€Рµ РЅСѓР¶РЅРѕ РІС‹Р±СЂР°С‚СЊ РґРµР№СЃС‚РІРёРµ:", n,m);
-            System.out.println("\n1. РЎРѕР·РґР°С‚СЊ СЂРѕР±РѕС‚Р° РЅР° РєР°СЂС‚Рµ\n2. Р’С‹Р±СЂР°С‚СЊ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ СЂРѕР±РѕС‚Р°\n3. Р’С‹Р№С‚Рё");
-            int step = sc.nextInt();
-            boolean flag = true;
-            boolean flagbool = true;
-            boolean orderflag = true;
-            while (orderflag){
-                switch (step) {
-                    case 1 -> {
-                        while (flag) {
-                            System.out.println("Р’РІРµРґРёС‚Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ СЂРѕР±РѕС‚Р°:");
-                            int x = sc.nextInt();
-                            int y = sc.nextInt();
+        System.out.println("Для просмотра списка допустимых команд введите h");
 
-                            RobotMap.Robot robot1 = map.createRobot(new Point(x, y));
-                            System.out.println("Р РѕР±РѕС‚ СЃРѕР·РґР°РЅ\nР•СЃР»Рё РЅСѓР¶РЅРѕ РІС‹Р№С‚Рё РѕР±СЂР°С‚РЅРѕ РЅР°РїРёС€РёС‚Рµ 'Р”Р°' , " +
-                                    "РµР»СЃРё С…РѕС‚РёС‚Рµ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РЅР°РїРёС€РёС‚Рµ 'РќРµС‚'");
-                            String flag1 = sc.next();
-                            if (flag1.equals("Р”Р°")) {
-                                flag = false;
-                                System.out.println("1. РЎРѕР·РґР°С‚СЊ СЂРѕР±РѕС‚Р° РЅР° РєР°СЂС‚Рµ\n2. Р’С‹Р±СЂР°С‚СЊ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ СЂРѕР±РѕС‚Р°\n3. Р’С‹Р№С‚Рё");
-                                step = sc.nextInt();
-                            }
-
-                        }
-
-                    }
-                    case 2 -> {
-                        while (flagbool){
-                            List<RobotMap.Robot> list = map.getRobots();
-                            System.out.println(list);
-                            System.out.println("Р’С‹Р±РµСЂРёС‚Рµ РЅРѕРјРµСЂ СЂРѕР±РѕС‚Р° РїРѕ РёРЅРґРµРєСЃСѓ");
-                            int numb = sc.nextInt();
-                            System.out.println("Р’С‹Р±РµСЂРёС‚Рµ РЅР°РїСЂР°РІР»РµРЅРёРµ");
-                            Direction direction = Direction.valueOf(sc.next());
-                            RobotMap.Robot robot = list.get(numb);
-                            robot.changeDirection(direction);
-                            System.out.println("Р’С‹Р±РµСЂРёС‚Рµ С€Р°Рі РїРµСЂРµРјРµС‰РµРЅРёСЏ");
-                            int move = sc.nextInt();
-                            robot.move(move);
-                            System.out.println("РџСЂРѕРёР·РІРµРґРµРЅ С€Р°Рі СЂР°Р·РјРµСЂРѕРј"+ move+" СЂРѕР±РѕС‚РѕРј "+ robot+"" +
-                                    "\nРўРµРїРµСЂСЊ РѕРЅ РЅР° РїРѕР·РёС†РёРё "+ robot.getPoint());
-                            System.out.println("Р РѕР±РѕС‚ РїРµСЂРµРјРµС‰РµРЅ\nР•СЃР»Рё РЅСѓР¶РЅРѕ РІС‹Р№С‚Рё РѕР±СЂР°С‚РЅРѕ РЅР°РїРёС€РёС‚Рµ 'Р”Р°' , " +
-                                    "РµР»СЃРё С…РѕС‚РёС‚Рµ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РЅР°РїРёС€РёС‚Рµ 'РќРµС‚'");
-                            String flag2 = sc.next();
-                            if (flag2.equals("Р”Р°")) {
-                                flagbool = false;
-                                System.out.println("1. РЎРѕР·РґР°С‚СЊ СЂРѕР±РѕС‚Р° РЅР° РєР°СЂС‚Рµ\n" +
-                                        "2. Р’С‹Р±СЂР°С‚СЊ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ СЂРѕР±РѕС‚Р°\n3. Р’С‹Р№С‚Рё");
-                                step = sc.nextInt();
-                            }
-                        }
-
-                    }
-                    case 3 -> {
-                        orderflag = false;
-                    }
-
-
+        while (true) {
+            System.out.println("Введите команду");
+            String command = userInput.nextLine();
+            try {
+                String commandExecutionResult = commandManager.handleCommand(command);
+                if (Objects.nonNull(commandExecutionResult) && !commandExecutionResult.isBlank()) {
+                    System.out.println(commandExecutionResult);
                 }
+            } catch (CommandNotFoundException e) {
+                System.err.println("Команда [" + e.getMessage() + "] не найдена");
+            } catch (CommandExecutionException e) {
+                System.err.println("Во время исполнения команды произошла ошибка: " + e.getMessage());
+            }
+        }
 
+    }
 
+    private static class CommandManager {
+
+        private final RobotMap map;
+        private final Map<String, CommandExecutor> commands;
+
+        public CommandManager(RobotMap map) {
+            this.map = map;
+
+            commands = new HashMap<>();
+            commands.put("h", this::printHelp);
+            commands.put("q", this::quit);
+            commands.put("a", this::addRobot);
+            commands.put("l", this::listRobots);
+            commands.put("m", this::moveRobot);
+            commands.put("cd", this::changeDirection);
+            // FIXME: 27.01.2023
+        }
+
+        public String handleCommand(String command) throws CommandNotFoundException, CommandExecutionException {
+            String[] split = command.split(" ");
+            String commandCode = split[0];
+
+            CommandExecutor executor = commands.get(commandCode);
+            if (executor == null) {
+                throw new CommandNotFoundException(command);
+            }
+
+            String[] args = Arrays.copyOfRange(split, 1, split.length);
+            return executor.execute(args);
+        }
+
+        private String addRobot(String[] args) throws CommandExecutionException {
+            if (args.length < 2) {
+                throw new CommandExecutionException("Недостаточно аргументов");
+            }
+
+            int x = Integer.parseInt(args[0]);
+            int y = Integer.parseInt(args[1]);
+
+            try {
+                map.createRobot(new Point(x, y));
+            } catch (RobotCreationException e) {
+                throw new CommandExecutionException(e.getMessage());
+            }
+
+            return null;
+        }
+
+        private String listRobots(String[] args) throws  CommandExecutionException{
+            // FIXME: 27.01.2023
+            if(map.getRobots().size() == 0){
+                throw  new CommandExecutionException("В списке нет роботов!");
+            }
+            List<RobotMap.Robot> list =  map.getRobots();
+            String l = "";
+            for (int i = 0; i < list.size(); i++) {
+                l+= list.get(i) + "\n";
+            }
+
+            return l;
+        }
+        private  String moveRobot(String[] args) throws CommandExecutionException{
+            if(args.length>2){
+                throw new CommandExecutionException("Неправильное количество аргументов");
+            }
+            int index = Integer.parseInt(args[0]);
+            int index2;
+            try {
+                 index2 = Integer.parseInt(args[1]);
+                 RobotMap.Robot Robot = map.getRobots().get(index-1);
+                try {
+                    int step = index2;
+                    if(index2 == 1 ){
+                        Robot.move();
+                    }else {
+                        while (index2 > 0){
+                            Robot.move(step);
+                            index2--;
+                        }
+                    }
+
+                } catch (RobotMoveException e) {
+                    System.err.println("Ошибка - " + e.getMessage());
+                }
+            } catch (ArrayIndexOutOfBoundsException e ){
+                System.err.println("Не существует параметра");
             }
 
 
-        }catch (CreateMapValidationException | RobotCreationException | RobotMoveException e){
-            System.err.println(e.getMessage());
+
+            return null;
+        }
+        private  String changeDirection(String[] args) throws CommandExecutionException {
+            if(args.length>2){
+                throw new CommandExecutionException("Неправильное количество аргументов");
+            }
+            int index = Integer.parseInt(args[0]);
+            if(index> map.getRobots().size() || index <= 0){
+                throw  new CommandExecutionException("Робота с номером ["+ (index) +"]  не существует!");
+            }
+
+            try{
+                RobotMap.Robot Robot = map.getRobots().get(index-1);
+                System.out.println(Robot);
+                Direction dir = Direction.valueOf(args[1]);
+                Robot.changeDirection(dir);
+            } catch (IllegalArgumentException e ){
+                System.err.println("Неверное направление!");
+            }
+
+
+
+
+
+            return null;
+        }
+
+        private String printHelp(String[] args) {
+            return """
+                    h                  -> распечатать список допустимых команд (help)
+                    a 1 2              -> создать робота на позиции (1, 2) (add)
+                    l                  -> распечатать всех роботов (list)
+                    m id [5]           -> перемещаем робота на 1 единицу вперед (move)
+                    cd id [t, r, b, l] -> изменить направление робота (change direction)
+                    q                  -> завершить программу (quit)
+                    """;
+        }
+
+        private String quit(String[] args) {
+            System.exit(0);
+            return null;
+        }
+
+        private interface CommandExecutor {
+            String execute(String[] args) throws CommandExecutionException;
         }
 
     }
 
     private void homework() {
-        // 0. Р”РѕР±Р°РІРёС‚СЊ РїСЂРѕРІРµСЂРєСѓ РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С… РІ РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂРµ RobotMap
-        // 1. Р”РѕСЂР°Р±РѕС‚Р°С‚СЊ РєР»Р°СЃСЃ РєР°СЂС‚С‹: Р·Р°РїСЂРµС‚РёС‚СЊ РѕРґРЅРѕРІСЂРµРјРµРЅРЅРѕРµ РЅР°С…РѕР¶РґРµРЅРёРµ РєР°РєРѕРіРѕ-С‚Рѕ РєРѕР»РёС‡РµСЃС‚РІР° СЂРѕР±РѕРІ РЅР° РєР°СЂС‚Рµ.
-        //    РћРіСЂР°РЅРёС‡РµРЅРёРµ РІ 10 СЂРѕР±РѕС‚РѕРІ.
-        // 2. Р—Р°РґР°С‚СЊ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІС‹Р·РѕРІР° #move РЅР° Р·Р°РґР°РЅРЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РµРґРёРЅРёС†.
-        //    РњРµС‚РѕРґ Р±РµР· Р°СЂРіСѓРјРµРЅС‚РѕРІ РїРµСЂРµРјРµС‰Р°РµС‚ РЅР° 1 РµРґРёРЅРёС†Сѓ.
-        // 3*. Р РµР°Р»РёР·РѕРІР°С‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРѕРµ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёРµ СЃ РєР°СЂС‚РѕР№ С‡РµСЂРµР· РєРѕРЅСЃРѕР»СЊ.
-        // 3.1 Р§РµСЂРµР· РєРѕРЅСЃРѕР»СЊ СЃРїСЂР°С€РёРІР°С‚СЊ РїР°СЂР°РјРµС‚СЂС‹ СЃРѕР·РґР°РЅРёСЏ РєР°СЂС‚С‹
-        // 3.2 Р§РµСЂРµР· РєРѕРЅСЃРѕР»СЊ СЃРїСЂР°С€РёРІР°С‚СЊ СЃРѕР·РґР°РЅРёСЏ СЂРѕР±РѕС‚Р° РёР»Рё РµРіРѕ РїРµСЂРµРґРІРёР¶РµРЅРёРµ
-        //     РќР°РїСЂРёРјРµСЂ, move 17489123641-84-1o1-321 TOP 10
-        // 3.3 Р›СЋР±С‹Рµ РґСЂСѓРіРёРµ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ РєР°СЂС‚РѕР№...
-        // 4*. РџРѕРїСЂРѕР±РѕРІР°С‚СЊ СЂРµР°Р»РёР·РѕРІР°С‚СЊ РєР°РєСѓСЋ-С‚Рѕ СЃРІРѕСЋ СЃС‚СЂСѓРєС‚СѓСЂСѓ (РђРІС‚РѕРјРѕР±РёР»СЊ)
+        // Доделать остальные команды move, change direction и list
     }
 
 }
