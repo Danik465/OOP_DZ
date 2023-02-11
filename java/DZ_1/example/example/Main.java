@@ -12,7 +12,9 @@ public class Main {
         // Роботы имеют направление (которое можно менять (поворачивать)),
         //              роботы идут только вперед (или стоят на месте).
 
-        Scanner userInput = new Scanner(System.in);
+        ConsoleInput userInput = new ConsoleInput();
+
+
 
         System.out.println("Добро пожаловать в игру!");
         System.out.println("...описание...");
@@ -27,8 +29,9 @@ public class Main {
 
                 map = new DefualtRobotMap(n, m);
                 break;
-            } catch (CreateMapValidationException | InputMismatchException e) {
+            } catch (CreateMapValidationException | ConsoleInputExeption e) {
                 System.err.println("Возникла ошибка при создании карты: " + e.getMessage());
+                userInput.clear();
             } catch (Throwable e) {
                 System.err.println("Возникла ошибка на стороне сервера: " + e.getMessage());
                 System.exit(1);
@@ -43,15 +46,16 @@ public class Main {
 
         while (true) {
             System.out.println("Введите команду");
-            String command = userInput.nextLine();
+
             try {
+                String command = userInput.nextLine();
                 String commandExecutionResult = commandManager.handleCommand(command);
                 if (Objects.nonNull(commandExecutionResult) && !commandExecutionResult.isBlank()) {
                     System.out.println(commandExecutionResult);
                 }
             } catch (CommandNotFoundException e) {
                 System.err.println("Команда [" + e.getMessage() + "] не найдена");
-            } catch (CommandExecutionException e) {
+            } catch (CommandExecutionException | ConsoleInputExeption e) {
                 System.err.println("Во время исполнения команды произошла ошибка: " + e.getMessage());
             }
         }
