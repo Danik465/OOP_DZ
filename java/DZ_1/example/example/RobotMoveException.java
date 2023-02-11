@@ -2,14 +2,14 @@ package DZ_1.example.example;
 
 public class RobotMoveException extends Exception {
 
-    private final RobotMap.Robot robot;
+    private final DefualtRobotMap.RobotDefault robotDefault;
 
-    public RobotMoveException(String message, RobotMap.Robot robot) {
+    public RobotMoveException(String message, DefualtRobotMap.RobotDefault robotDefault) {
         super(message);
-        this.robot = robot;
+        this.robotDefault = robotDefault;
     }
 
-    public RobotMap.Robot getRobot() {
-        return robot;
+    public DefualtRobotMap.RobotDefault getRobot() {
+        return robotDefault;
     }
 }
