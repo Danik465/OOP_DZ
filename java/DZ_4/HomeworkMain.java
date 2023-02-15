@@ -29,7 +29,7 @@ public class HomeworkMain {
         System.out.println(goldenAppleBox.getSumWeight()); // 0.0
         System.out.println(apples); // 9.0 + 2.0 = 11.0
 //
-////        apples.moveTo(goldenAppleBox); // нельзя!
+//        apples.moveTo(goldenAppleBox); // нельзя!
 //        orangeBox.moveTo(apples); // нельзя
     }
 

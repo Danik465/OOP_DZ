@@ -24,7 +24,7 @@ public class Box <E extends Fruit>{
         // TODO: 24.01.2023
         list.add(fruit);
     }
-    
+
     public double getSumWeight() {
         // TODO: 24.01.2023 Просуммировать веса всех фруктов в коробке
         double sum = 0;
@@ -34,12 +34,12 @@ public class Box <E extends Fruit>{
         return sum;
     }
 
-    public   void  moveTo(Box<Apple> anotherBox) {
+    public   void  moveTo(Box<? super E> anotherBox) {
         // TODO: 24.01.2023
         // Пересыпать фрукты из текущей коробки в anotherBox
         for (int i = 0; i < list.size(); i++) {
 //            list.add((E) anotherBox.list.get(i));
-            anotherBox.list.add((Apple) list.get(i));
+            anotherBox.list.add( list.get(i));
 
         }
 
